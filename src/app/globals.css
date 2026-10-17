@@ -1,0 +1,64 @@
+@import "tailwindcss";
+
+/*
+ * The palette is not written here. `layout.tsx` sets these variables from
+ * src/tokens, which is synced from the app's asset catalog, so the site is
+ * painted with exactly the colors it documents.
+ */
+@theme inline {
+  --color-ground: var(--ground);
+  --color-pattern: var(--pattern);
+  --color-card: var(--card);
+  --color-gold: var(--gold);
+  --color-description: var(--description);
+  --color-fill: var(--fill);
+  --color-on-fill: var(--on-fill);
+  --color-progress: var(--progress);
+  /* Body copy: the app's gold at 78%, as its descriptions are set. */
+  --color-body: color-mix(in srgb, var(--gold) 78%, var(--ground));
+  --color-hit: #7fb069;
+  --color-miss: #a85a44;
+
+  --font-display: var(--font-katibeh), ui-serif, Georgia, serif;
+  /* SF Pro on Apple devices, the platform's own UI face elsewhere. */
+  --font-text: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, "Segoe UI", Roboto, sans-serif;
+
+  --radius-kotek: 14px;
+}
+
+@layer base {
+  html {
+    color-scheme: dark;
+    scroll-padding-top: 5rem;
+  }
+
+  body {
+    background-color: var(--ground);
+    color: var(--color-body);
+    font-family: var(--font-text);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--fill);
+    outline-offset: 2px;
+  }
+}
+
+/* The hero's two rows of motif, sliding like the app's background. */
+@keyframes marquee {
+  to {
+    transform: translateX(var(--period));
+  }
+}
+
+.marquee {
+  animation: marquee var(--duration, 20s) linear infinite;
+}
+
+/* Reduce Motion: the rows stand still, as they do in the app. */
+@media (prefers-reduced-motion: reduce) {
+  .marquee {
+    animation: none;
+  }
+}
