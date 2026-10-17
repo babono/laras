@@ -20,6 +20,8 @@ export type ColorToken = {
   role: string;
   /** Not referenced by any code yet. */
   unused?: boolean;
+  /** In the design (Frame 240) but not built in the app yet. */
+  designed?: boolean;
 };
 
 const asset = (name: Catalog) => catalog.colors[name];
@@ -41,15 +43,17 @@ export const colorGroups: { title: string; intro: string; tokens: ColorToken[] }
       "Gold on brown is the whole family. There is no light text: what used to be cream is the title gold, and supporting text is the description brown.",
     tokens: [
       { name: "TitleText", hex: asset("TitleText"), swift: "Theme.gold · Theme.cream", source: "asset", role: "Titles, primary text, outlines and accents." },
-      { name: "DescriptionText", hex: asset("DescriptionText"), swift: "Theme.description · Theme.stone", source: "asset", role: "Descriptions, metadata, captions." },
+      { name: "DescriptionText", hex: asset("DescriptionText"), swift: "Theme.description · Theme.stone", source: "asset", role: "Descriptions, metadata, captions. Was #7A5E4E, which failed contrast." },
     ],
   },
   {
     title: "Action",
-    intro: "The filled button is the one place in the app where dark type sits on a light slab. The two colors are a pair and move together.",
+    intro:
+      "The filled button is the one place in the app where dark type sits on a light slab; the two colors are a pair and move together. The secondary slab is darker than the ground, so it reads as a control rather than another card. The glass button has no color of its own: it takes it from what is behind it.",
     tokens: [
       { name: "Tertiary", hex: asset("Tertiary"), swift: "Theme.buttonFill", source: "asset", role: "The filled button's slab." },
       { name: "LaunchBackground", hex: asset("LaunchBackground"), swift: "Theme.onButtonFill", source: "asset", role: "Type on the button fill. Only correct on Tertiary." },
+      { name: "ButtonSecondary", hex: asset("ButtonSecondary"), swift: "Theme.buttonSecondary", source: "asset", role: "The secondary button's slab, with gold type." },
       { name: "LoadingBar", hex: asset("LoadingBar"), swift: "Theme.progress", source: "asset", role: "Progress: the splash's loading line." },
     ],
   },
@@ -67,16 +71,27 @@ export const colorGroups: { title: string; intro: string; tokens: ColorToken[] }
   {
     title: "The two halves",
     intro:
-      "Polos and sangsih keep their own color wherever they appear (the score, the picker cards, the mixer chips) so the interlock reads at a glance.",
+      "Polos and sangsih keep their own color wherever they appear (the score, the picker cards, the mixer chips) so the interlock reads at a glance. The designed note tiles use a deeper pair; see Note tile.",
     tokens: [
       { name: "Polos", hex: "#5FA8D3", swift: "Theme.polosVoice", source: "literal", role: "The steady half, on the beat." },
       { name: "Sangsih", hex: "#A97CD1", swift: "Theme.sangsihVoice", source: "literal", role: "The answering half, between the beats." },
     ],
   },
   {
-    title: "Judgement",
+    title: "Play screen",
     intro:
-      "Feedback while playing. Warmed towards the palette, but kept clearly green, red and amber: they have to read as right or wrong at a glance, mid-stroke.",
+      "The bilah on the play screen, as designed. Each state is a fill, a lighter ring and an inner strip; these are the fills. There are two verdicts, Great and Miss, shown as an aura of the key's color with the word inside. There is no separate wrong-key state for now.",
+    tokens: [
+      { name: "Great", hex: "#79EC90", swift: "ring #DEFEE5 · inner #4CC294", source: "literal", role: "A strike on time, on the right bilah.", designed: true },
+      { name: "Next", hex: "#EBB164", swift: "ring #FFE2B6 · inner #C2975A", source: "literal", role: "The bilah to strike next.", designed: true },
+      { name: "Miss", hex: "#8F303B", swift: "ring #B43D54 · inner #BD5267", source: "literal", role: "A note that was not struck in time.", designed: true },
+      { name: "Damped", hex: "#59482E", swift: "ring #2B211C · inner #7B5F39", source: "literal", role: "A bilah at rest, stopped ringing.", designed: true },
+    ],
+  },
+  {
+    title: "Judgement (current)",
+    intro:
+      "What the app colors a strike with today. Warmed towards the palette, but kept clearly green, red and amber to read at a glance mid-stroke. The play-screen states above replace these when they are built, and Wrong goes.",
     tokens: [
       { name: "Hit", hex: "#7FB069", swift: "Theme.hit", source: "literal", role: "A correct strike." },
       { name: "Miss", hex: "#A85A44", swift: "Theme.miss", source: "literal", role: "A missed note. Also destructive actions." },

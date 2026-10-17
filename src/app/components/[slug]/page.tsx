@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { DoDont } from "@/components/do-dont";
 import { PageHeader, SectionTitle } from "@/components/page-header";
 import { Preview } from "@/components/previews";
+import { StatusBadge } from "@/components/status-badge";
 import { components } from "@/content/components";
 
 export const dynamicParams = false;
@@ -28,7 +29,13 @@ export default async function ComponentPage({ params }: PageProps<"/components/[
         {c.summary}
       </PageHeader>
       <p className="mt-4 text-sm">
-        <code className="text-gold">{c.swift}</code> in <code className="text-gold/80">Kotek/{c.file}</code>
+        {c.status === "designed" ? (
+          <StatusBadge />
+        ) : (
+          <>
+            <code className="text-gold">{c.swift}</code> in <code className="text-gold/80">Kotek/{c.file}</code>
+          </>
+        )}
       </p>
 
       <SectionTitle>Preview</SectionTitle>
@@ -58,6 +65,25 @@ export default async function ComponentPage({ params }: PageProps<"/components/[
           </div>
         ))}
       </dl>
+
+      {c.guidance && (
+        <>
+          <SectionTitle>Guidance</SectionTitle>
+          <ol className="mt-6 max-w-3xl space-y-7">
+            {c.guidance.map((g) => (
+              <li key={g.title}>
+                <h3 className="text-lg font-semibold text-gold">{g.title}</h3>
+                <p className="mt-2 leading-relaxed">{g.body}</p>
+                {g.source && (
+                  <a href={g.source.href} className="mt-2 inline-block text-sm text-gold underline-offset-2 hover:underline">
+                    {g.source.label} ↗
+                  </a>
+                )}
+              </li>
+            ))}
+          </ol>
+        </>
+      )}
 
       <SectionTitle>Usage</SectionTitle>
       <DoDont dos={c.do} donts={c.dont} />

@@ -2,15 +2,16 @@
   "source": "Kotek/Resources/Assets.xcassets",
   "colors": {
     "Background": "#2A211C",
+    "ButtonSecondary": "#1C1612",
     "Card": "#3D322C",
-    "DescriptionText": "#7A5E4E",
+    "DescriptionText": "#9D8273",
     "KeyDampened": "#7B5F39",
     "KeyHighlight": "#F3D29C",
     "LaunchBackground": "#2A211C",
     "LoadingBar": "#8D3021",
     "PatternBackground": "#312721",
     "Subtle": "#C9B8AC",
-    "Tertiary": "#FDDC8A",
+    "Tertiary": "#FBD494",
     "Text": "#F5EDE4",
     "TitleText": "#C29A59"
   }

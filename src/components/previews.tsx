@@ -7,13 +7,14 @@
  */
 
 import { useState } from "react";
+import { MotifBand } from "./motif-band";
 import { ArrowRight, ChevronLeft, Clock, Gear, Help, Minus, Play, Plus, Radio } from "./icons";
 
-type PillStyle = "filled" | "outlined" | "secondary";
+type PillStyle = "filled" | "glass" | "secondary";
 
 export function Pill({
   title,
-  style = "outlined",
+  style = "glass",
   compact = false,
   leading,
   trailing,
@@ -26,8 +27,8 @@ export function Pill({
 }) {
   const look = {
     filled: "bg-fill text-on-fill",
-    outlined: "border border-gold bg-gold/8 text-gold backdrop-blur",
-    secondary: "bg-card text-gold",
+    glass: "glass text-gold",
+    secondary: "bg-[#1C1612] text-gold",
   }[style];
   return (
     // The drawn pill can be 38 tall; the target is never under 44.
@@ -168,17 +169,131 @@ function ConfirmDialog() {
   );
 }
 
+/** Glass needs something behind it to be glass: the carved motif, as in the app. */
+function OverContent({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="relative grid h-44 w-[min(560px,80vw)] place-items-center overflow-hidden rounded-kotek bg-ground">
+      <div className="absolute inset-0">
+        <MotifBand height={176} count={10} />
+      </div>
+      <div className="relative">{children}</div>
+    </div>
+  );
+}
+
+function GangsaCard() {
+  return (
+    <div className="w-[232px] overflow-hidden rounded-[24px] bg-card">
+      <div className="grid h-[136px] place-items-center bg-[linear-gradient(160deg,#5a4636,#2a211c)] text-xs tracking-[0.15em] text-gold/50 uppercase">
+        Gangsa photo
+      </div>
+      <div className="p-4">
+        <h4 className="font-display text-[34px] leading-[41px] text-gold">Pemade 1</h4>
+        <p className="mt-2 text-[15px] leading-5 text-description">Last used 2 days ago</p>
+        <p className="text-[15px] leading-5 text-description">
+          <span className="font-semibold">80%</span> total accuracy
+        </p>
+      </div>
+    </div>
+  );
+}
+
+function PatternCard() {
+  // Polos on the top four rows, sangsih on the bottom four: a figure's
+  // shape, read left to right across one cycle.
+  const polos = [0, 1, 3, 2, 0, 1, 3, 2, 0, 1, 3, 2];
+  const sangsih = [0, 2, 1, 3, 0, 2, 1, 3, 0, 2, 1, 3];
+  return (
+    <div className="w-[232px] rounded-[24px] bg-card p-4">
+      <h4 className="font-display text-[34px] leading-[41px] text-gold">Ubitan Nyendok</h4>
+      <div className="relative mt-3 h-[120px] rounded-[8px] bg-ground/40">
+        {polos.map((row, i) => (
+          <span key={`p${i}`} className="absolute size-3 rounded-[3px] border border-[#7BA2E4] bg-[#5876AB]" style={{ left: 6 + i * 16, top: 6 + row * 13 }} />
+        ))}
+        {sangsih.map((row, i) => (
+          <span key={`s${i}`} className="absolute size-3 rounded-[3px] border border-[#B391D8] bg-[#8E6AB2]" style={{ left: 6 + i * 16, top: 62 + row * 13 }} />
+        ))}
+        <span className="absolute top-1.5 bottom-1.5 w-0.5 bg-ground" style={{ left: 69 }} />
+      </div>
+      <p className="mt-2 text-[15px] leading-5 font-semibold text-gold">96 BPM · best 64%</p>
+    </div>
+  );
+}
+
+function NoteTile({ voice, dim, size = 64 }: { voice: "polos" | "sangsih" | "damp"; dim?: boolean; size?: number }) {
+  const look = {
+    polos: { fill: dim ? "#313744" : "linear-gradient(#678BC6,#384B76)", border: "#7BA2E4" },
+    sangsih: { fill: dim ? "#3F3748" : "linear-gradient(#A281C4,#704A99)", border: "#B391D8" },
+    damp: { fill: "linear-gradient(#795E38,#4F3D2A)", border: "#9E7B49" },
+  }[voice];
+  return (
+    <span
+      className="grid place-items-center"
+      style={{ width: size, height: size, borderRadius: size * 0.22, background: look.fill, border: `3px solid ${look.border}` }}
+      aria-label={voice === "damp" ? "Damp" : `${voice}${dim ? ", partner's half" : ""}`}
+    >
+      {voice === "damp" && <span className="text-[11px] font-semibold text-[#3A2D22]">hand</span>}
+    </span>
+  );
+}
+
+function Key({ state }: { state: "great" | "next" | "miss" | "damped" }) {
+  const k = {
+    great: { fill: "#79EC90", ring: "#DEFEE5", inner: "#4CC294", text: "#DEFEE5" },
+    next: { fill: "#EBB164", ring: "#FFE2B6", inner: "#C2975A", text: "#FFE2B6" },
+    miss: { fill: "#8F303B", ring: "#B43D54", inner: "#BD5267", text: "#2B211C" },
+    damped: { fill: "#59482E", ring: "#2B211C", inner: "#7B5F39", text: "#2B211C" },
+  }[state];
+  return (
+    <div className="grid justify-items-center gap-2">
+      <div
+        className="relative grid h-[136px] w-[64px] place-items-center rounded-[20px] p-[5px]"
+        style={{ background: k.ring, boxShadow: `0 0 0 4px ${k.ring}55` }}
+      >
+        <div className="grid size-full place-items-center rounded-[16px]" style={{ background: k.fill }}>
+          <div className="relative grid h-[108px] w-[28px] place-items-center rounded-[12px]" style={{ background: k.inner }}>
+            <span className="absolute top-2.5 size-2.5 rounded-full bg-[#2B211C]" />
+            <span className="text-[20px] font-black" style={{ color: k.text }}>10</span>
+            <span className="absolute bottom-2.5 size-2.5 rounded-full bg-[#2B211C]" />
+          </div>
+        </div>
+      </div>
+      <span className="text-xs capitalize">{state}</span>
+    </div>
+  );
+}
+
+function Verdict({ kind }: { kind: "great" | "miss" }) {
+  const c = kind === "great" ? "#79EC90" : "#BD5267";
+  return (
+    <span
+      className="rounded-md px-3 pt-6 pb-1.5 text-[15px] font-bold"
+      style={{ color: c, background: `linear-gradient(to top, ${c}55, transparent)` }}
+    >
+      {kind === "great" ? "Great" : "Miss"}
+    </span>
+  );
+}
+
 /** One preview per component variant, by `${slug}/${variant}`. */
 export function Preview({ id }: { id: string }) {
   switch (id) {
     case "button/filled":
       return <Pill title="Start practice" style="filled" leading={<Play className="size-[18px]" />} />;
-    case "button/outlined":
-      return <Pill title="Next" trailing={<ArrowRight className="size-4" />} />;
     case "button/secondary":
       return <Pill title="Retry" style="secondary" />;
+    case "button/glass":
+      return (
+        <OverContent>
+          <Pill title="Next" trailing={<ArrowRight className="size-4" />} />
+        </OverContent>
+      );
     case "button/compact":
-      return <Pill title="Cancel" compact />;
+      return (
+        <OverContent>
+          <Pill title="Pause" compact />
+        </OverContent>
+      );
     case "secondary-button/default":
       return <SecondaryButton title="Connect controller" icon={<Radio className="size-[17px]" />} />;
     case "secondary-button/row":
@@ -207,6 +322,43 @@ export function Preview({ id }: { id: string }) {
       return (
         <div className="w-60" role="progressbar" aria-label="Loading" aria-valuenow={65} aria-valuemin={0} aria-valuemax={100}>
           <Bar value={0.65} color="var(--progress)" height={5} />
+        </div>
+      );
+    case "loading-bar/dark":
+      return (
+        <div className="w-60">
+          <Bar value={0.65} color="#1C1612" height={5} />
+        </div>
+      );
+    case "card/gangsa":
+      return <GangsaCard />;
+    case "card/pattern":
+      return <PatternCard />;
+    case "note-tile/voices":
+      return (
+        <div className="grid grid-cols-2 gap-4">
+          <NoteTile voice="sangsih" />
+          <NoteTile voice="polos" />
+          <NoteTile voice="sangsih" dim />
+          <NoteTile voice="polos" dim />
+        </div>
+      );
+    case "note-tile/damp":
+      return <NoteTile voice="damp" />;
+    case "key-state/keys":
+      return (
+        <div className="flex gap-6">
+          <Key state="great" />
+          <Key state="next" />
+          <Key state="miss" />
+          <Key state="damped" />
+        </div>
+      );
+    case "key-state/verdicts":
+      return (
+        <div className="flex gap-3">
+          <Verdict kind="great" />
+          <Verdict kind="miss" />
         </div>
       );
     case "stat-bar/default":

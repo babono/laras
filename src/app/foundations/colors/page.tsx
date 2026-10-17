@@ -25,7 +25,8 @@ const pairs = [
   { label: "Description text on the ground", fg: palette.description, bg: palette.ground },
   { label: "Description text on a card", fg: palette.description, bg: palette.card },
   { label: "Label on the filled button", fg: palette.onFill, bg: palette.fill },
-  { label: "Proposed description #A08470 on the ground", fg: "#A08470", bg: palette.ground, proposal: true },
+  { label: "Secondary button label", fg: palette.gold, bg: "#1C1612" },
+  { label: "Previous description #7A5E4E on the ground", fg: "#7A5E4E", bg: palette.ground, proposal: true },
 ];
 
 export default function Colors() {
@@ -50,9 +51,9 @@ export default function Colors() {
 
       <SectionTitle id="contrast">Contrast</SectionTitle>
       <p className="mt-3 max-w-3xl leading-relaxed">
-        WCAG asks 4.5:1 for body text and 3:1 for large text (24px, or 19px bold) and interface parts. Description text
-        fails on both surfaces, and it sets supporting text across the app (through Theme.stone and Theme.inkStone too),
-        so it is the most important contrast issue open. The designer&apos;s proposed replacement is in the last row.
+        WCAG asks 4.5:1 for body text and 3:1 for large text (24px, or 19px bold) and interface parts. The description
+        color was raised from #7A5E4E (last row) to pass large text everywhere; at 4.4:1 on the ground it is still a
+        hair under 4.5:1, so keep it for supporting text at 15pt and up, not for long body copy.
       </p>
       <div className="mt-6 overflow-x-auto rounded-kotek border border-gold/10">
         <table className="w-full min-w-[560px] text-left text-sm">
@@ -72,7 +73,7 @@ export default function Colors() {
                 <tr key={p.label} className="border-t border-gold/10">
                   <td className="px-4 py-3">
                     {p.label}
-                    {p.proposal && <span className="ml-2 rounded bg-gold/15 px-1.5 py-0.5 text-xs text-gold">proposal</span>}
+                    {p.proposal && <span className="ml-2 rounded bg-gold/15 px-1.5 py-0.5 text-xs text-gold">replaced</span>}
                   </td>
                   <td className="px-4 py-3">
                     <span className="rounded-md px-3 py-1.5" style={{ background: p.bg, color: p.fg }}>
@@ -107,7 +108,15 @@ function Swatch({ token }: { token: ColorToken }) {
         <div className="flex flex-wrap items-center gap-2 pt-1 text-xs">
           <code className="text-gold/80">{token.swift}</code>
           <span className="rounded bg-ground px-1.5 py-0.5">
-            {token.unused ? "unused" : token.source === "asset" ? "asset catalog" : token.source === "artwork" ? "artwork" : "Theme.swift"}
+            {token.unused
+              ? "unused"
+              : token.designed
+                ? "designed, not built"
+                : token.source === "asset"
+                  ? "asset catalog"
+                  : token.source === "artwork"
+                    ? "artwork"
+                    : "Theme.swift"}
           </span>
           <span className="rounded bg-ground px-1.5 py-0.5" title="Contrast against Background">
             {onGround.toFixed(1)}:1 on ground

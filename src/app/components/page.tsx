@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { PageHeader } from "@/components/page-header";
 import { Preview } from "@/components/previews";
+import { StatusBadge } from "@/components/status-badge";
 import { components } from "@/content/components";
 
 export const metadata: Metadata = { title: "Components" };
@@ -25,7 +26,10 @@ export default function Components() {
               <Preview id={`${c.slug}/${c.variants[0].id}`} />
             </div>
             <div className="p-5">
-              <h2 className="font-display text-2xl tracking-wide text-gold uppercase">{c.name}</h2>
+              <div className="flex flex-wrap items-center gap-3">
+                <h2 className="font-display text-2xl tracking-wide text-gold uppercase">{c.name}</h2>
+                {c.status === "designed" && <StatusBadge />}
+              </div>
               <p className="mt-1 text-[15px] leading-relaxed">{c.summary}</p>
             </div>
           </Link>

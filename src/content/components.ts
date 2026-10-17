@@ -10,6 +10,19 @@ export type ComponentDoc = {
   specs: [string, string][];
   do: string[];
   dont: string[];
+  /** "designed": in the design (Frame 240), not built in the app yet. */
+  status?: "app" | "designed";
+  /** Longer guidance, with the source it comes from. */
+  guidance?: { title: string; body: string; source?: { label: string; href: string } }[];
+};
+
+const HIG = {
+  materials: { label: "HIG · Materials", href: "https://developer.apple.com/design/human-interface-guidelines/materials" },
+  color: { label: "HIG · Color", href: "https://developer.apple.com/design/human-interface-guidelines/color" },
+  custom: {
+    label: "Applying Liquid Glass to custom views",
+    href: "https://developer.apple.com/documentation/swiftui/applying-liquid-glass-to-custom-views",
+  },
 };
 
 export const components: ComponentDoc[] = [
@@ -19,32 +32,60 @@ export const components: ComponentDoc[] = [
     swift: "PillButton · PrimaryButton",
     file: "Core/UI/Components.swift",
     summary:
-      "The canonical pill: GO, NEXT, START PRACTICE. Filled for the one action that moves you forward, outlined for the rest, secondary on a card.",
+      "The canonical pill: GO, NEXT, START PRACTICE. Primary for the one action that moves you forward, secondary for the rest, and Liquid Glass for controls that float over content.",
     variants: [
-      { id: "filled", label: "Filled", note: "The primary action. One per screen." },
-      { id: "outlined", label: "Outlined", note: "A glass wash over whatever is behind, which on camera screens is the instrument." },
-      { id: "secondary", label: "Secondary", note: "A card-colored slab." },
-      { id: "compact", label: "Compact", note: "Drawn 38pt tall, with a 44pt target." },
+      { id: "filled", label: "Primary", note: "The one action that moves the player on." },
+      { id: "secondary", label: "Secondary", note: "A dark slab with gold type, for the other actions." },
+      { id: "glass", label: "Glass", note: "For controls floating over content: bars, overlays, the camera. A web approximation; on iOS this is the system material." },
+      { id: "compact", label: "Compact glass", note: "Drawn 38pt tall, with a 44pt target." },
     ],
     specs: [
       ["Height", "56pt (compact 38pt, target 44pt)"],
       ["Corner radius", "14pt"],
       ["Horizontal padding", "30pt (compact 18pt)"],
       ["Label", "SF Pro 19pt Black, uppercase, 1.5pt tracking (compact 14pt)"],
-      ["Icon gap", "10pt (compact 8pt)"],
-      ["Filled", "Tertiary slab, LaunchBackground label"],
-      ["Outlined", "TitleText 1pt border, 8% TitleText wash over a thin material"],
+      ["Icon gap", "8pt"],
+      ["Primary", "Tertiary #FBD494 slab, LaunchBackground label"],
+      ["Secondary", "ButtonSecondary #1C1612 slab, TitleText label"],
+      ["Glass", "glassEffect(.regular.interactive(), in: RoundedRectangle(cornerRadius: 14)); untinted; TitleText label; no border"],
       ["Feedback", "Kajar tick on press; silent for buttons that record or play audio"],
     ],
     do: [
-      "Use one filled button per screen, for the step that moves the player on.",
-      "Put a trailing arrow on buttons that go somewhere; a leading icon on buttons that do something.",
+      "Use one or two prominent buttons per view, for the step that moves the player on.",
+      "Use glass only for controls that float over content.",
       "Keep labels to one or two short words.",
     ],
     dont: [
+      "Put a glass button inside a card or list. That's the content layer; use Secondary.",
+      "Tint the glass. Color on glass is for the one primary action, and that is the filled button.",
       "Let a label wrap. It is clipped instead, as a signal to shorten it.",
-      "Make the compact button's target smaller than 44pt.",
-      "Put light type on the filled slab.",
+    ],
+    guidance: [
+      {
+        title: "Glass is for the functional layer",
+        body: "Liquid Glass is a layer for controls and navigation that floats above the content. Apple: \u201cDon't use Liquid Glass in the content layer.\u201d In Kotek that means bottom bars, the pause overlay and controls over the camera or the waterfall. A button inside a settings card or a list is content, and stays a solid Secondary.",
+        source: HIG.materials,
+      },
+      {
+        title: "Use it sparingly",
+        body: "Apple: \u201cLimit these effects to the most important functional elements in your app.\u201d A bar with two glass buttons is fine; a screen of them distracts from the instrument they're meant to frame.",
+        source: HIG.materials,
+      },
+      {
+        title: "Regular, not clear",
+        body: "Regular glass blurs and adjusts what's behind it to keep labels legible, and it's what most system components use. Clear is for controls over photos and video, and needs a 35% dark dimming layer when the content is bright. Kotek's controls sit on the brown ground or the camera, so they use regular.",
+        source: HIG.materials,
+      },
+      {
+        title: "Color only for the primary action",
+        body: "Glass has no color of its own; it takes it from what's behind. Apple asks to apply color sparingly, reserve it for primary actions, put it on the background rather than the label, and \u201crefrain from adding color to the background of multiple controls.\u201d Gold labels suit Kotek's monochrome brown, which is the case Apple names for using a brand color as the accent.",
+        source: HIG.color,
+      },
+      {
+        title: "Build it with the system",
+        body: "Use the system material, not a lookalike: .buttonStyle(.glass) for a standard button, or glassEffect(.regular.interactive(), in:) for a custom one, which gives it the same press response. Put several glass controls in one GlassEffectContainer so they render together and can morph into each other. The system then handles Reduce Transparency and Increase Contrast.",
+        source: HIG.custom,
+      },
     ],
   },
   {
@@ -52,7 +93,8 @@ export const components: ComponentDoc[] = [
     name: "Secondary button",
     swift: "SecondaryButton",
     file: "Core/UI/Components.swift",
-    summary: "The outlined utility button for settings and secondary actions: Switch gangsa, History, Connect controller.",
+    summary:
+      "The outlined utility button for actions inside cards: Switch gangsa, History, Connect controller. Inside a card it stays solid; glass is only for controls floating over content.",
     variants: [
       { id: "default", label: "With icon" },
       { id: "row", label: "In a row", note: "Wrapped with a 10pt gap." },
@@ -139,7 +181,10 @@ export const components: ComponentDoc[] = [
     swift: "LoadingBar",
     file: "Features/Onboarding/Splash/LoadingBar.swift",
     summary: "The splash's progress: a thin red line filling a card-colored track. No percentage on screen.",
-    variants: [{ id: "default", label: "Loading" }],
+    variants: [
+      { id: "default", label: "Loading", note: "LoadingBar on a Card track." },
+      { id: "dark", label: "Dark", note: "ButtonSecondary on a Card track. In the design; where it's used is still to be decided." },
+    ],
     specs: [
       ["Height", "5pt, capsule"],
       ["Track", "Card"],
@@ -182,5 +227,77 @@ export const components: ComponentDoc[] = [
     ],
     do: ["Say exactly what will be lost in the message.", "Name the confirm button for the action: Delete, not OK."],
     dont: ["Ask for confirmation on actions that can be undone."],
+  },
+  {
+    slug: "card",
+    name: "Card",
+    swift: "—",
+    file: "designed",
+    status: "designed",
+    summary: "A gangsa or a pattern as a tile in a picker: a picture or a preview on top, the name in Katibeh, and a line or two about it.",
+    variants: [
+      { id: "gangsa", label: "Gangsa", note: "Photo flush with the top edge, sharing the card's corners." },
+      { id: "pattern", label: "Pattern", note: "A preview of the figure: polos on top, sangsih below, the cursor where the cycle is." },
+    ],
+    specs: [
+      ["Corner radius", "24pt"],
+      ["Padding", "16pt"],
+      ["Inner shapes", "24 − 16 = 8pt, concentric with the card (ConcentricRectangle)"],
+      ["Photo", "Flush to the top and sides, sharing the card's top corners"],
+      ["Title", "Katibeh 34/41, TitleText"],
+      ["Title to text", "8pt"],
+      ["Metadata", "SF Pro 15/20, DescriptionText; the number in semibold"],
+      ["Surface", "Card #3D322C, on the ground"],
+    ],
+    do: [
+      "Keep to the 8-point grid inside the card: 16 padding, 8 between title and text.",
+      "Give anything nested in a card the concentric radius, not one of its own.",
+    ],
+    dont: ["Put a glass button on a card; cards are content.", "Add a hairline border; the step from ground to card already separates it."],
+  },
+  {
+    slug: "note-tile",
+    name: "Note tile",
+    swift: "—",
+    file: "designed",
+    status: "designed",
+    summary: "One note of a figure: polos or sangsih, lit when it's the half you play and dimmed when it's your partner's. The brown tile is a damp, with the hand that stops the key.",
+    variants: [
+      { id: "voices", label: "Polos and sangsih", note: "Lit (your half) and dimmed (the other half)." },
+      { id: "damp", label: "Damp", note: "The hand glyph needs an asset from the designer; a placeholder is shown." },
+    ],
+    specs: [
+      ["Shape", "Rounded square; radius about 22% of the side, so tiles of every size match"],
+      ["Border", "3pt, a lighter tint of the fill"],
+      ["Polos, lit", "Gradient #678BC6 → #384B76, border #7BA2E4"],
+      ["Sangsih, lit", "Gradient #A281C4 → #704A99, border #B391D8"],
+      ["Dimmed", "Polos #313744, sangsih #3F3748, same borders"],
+      ["Damp", "Gradient #795E38 → #4F3D2A, border #9E7B49, hand #3A2D22"],
+    ],
+    do: ["Keep polos blue and sangsih purple wherever a note appears."],
+    dont: ["Show a dimmed note as playable; dimmed is the partner's half."],
+  },
+  {
+    slug: "key-state",
+    name: "Key state",
+    swift: "—",
+    file: "designed",
+    status: "designed",
+    summary: "A bilah on the play screen, and the verdict on a strike. Two verdicts only: Great, in a green aura, and Miss, in a red one.",
+    variants: [
+      { id: "keys", label: "Great, next, miss, damped" },
+      { id: "verdicts", label: "Verdicts", note: "The word inside an aura of its color, above the key." },
+    ],
+    specs: [
+      ["Great", "Fill #79EC90, ring #DEFEE5, inner #4CC294, number #DEFEE5"],
+      ["Next", "Fill #EBB164, ring #FFE2B6, inner #C2975A"],
+      ["Miss", "Fill #8F303B, ring #B43D54, inner #BD5267"],
+      ["Damped", "Fill #59482E, ring #2B211C, inner #7B5F39"],
+      ["Holes", "Two #2B211C dots where the bilah is pinned"],
+      ["Verdict", "SF Pro Bold: Great #79EC90, Miss #BD5267, each on an aura of its color"],
+      ["Wrong key", "No separate state for now"],
+    ],
+    do: ["Show exactly one key as Next at a time.", "Let the verdict fade; it's feedback, not a badge."],
+    dont: ["Rely on color alone: the verdict says Great or Miss in words."],
   },
 ];

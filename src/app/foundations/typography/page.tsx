@@ -36,8 +36,9 @@ export default function Typography() {
 
       <SectionTitle>Scale</SectionTitle>
       <p className="mt-3 max-w-3xl leading-relaxed">
-        Sizes are in points in the app and pixels here. The app writes sizes directly, so these names are Laras&apos;s;
-        the uses column counts how many call sites set each size today.
+        Sizes are in points in the app and pixels here, written size/line height. The text styles follow Apple&apos;s
+        Dynamic Type sizes, which is where the design&apos;s Title 34/41 and Description 17/22 come from. The uses
+        column counts how many call sites set each size today.
       </p>
       <div className="mt-6 divide-y divide-gold/10 rounded-kotek border border-gold/10">
         {typeScale.map((t) => (
@@ -45,7 +46,8 @@ export default function Typography() {
             <div className="text-sm">
               <p className="font-semibold text-gold">{t.name}</p>
               <p className="mt-1 font-mono text-xs">
-                {t.face === "display" ? "Katibeh" : "SF Pro"} {t.size} · {t.weight}
+                {t.face === "display" ? "Katibeh" : "SF Pro"} {t.size}
+                {t.lineHeight ? `/${t.lineHeight}` : ""} · {t.weight}
                 {t.tracking ? ` · ${t.tracking} track` : ""}
               </p>
               <p className="mt-1 font-mono text-xs text-gold/70">{t.swift}</p>
@@ -59,7 +61,7 @@ export default function Typography() {
                   fontSize: t.size,
                   fontWeight: t.weight,
                   letterSpacing: t.tracking,
-                  lineHeight: 1.2,
+                  lineHeight: t.lineHeight ? `${t.lineHeight}px` : 1.2,
                 }}
               >
                 {t.sample}
@@ -72,6 +74,7 @@ export default function Typography() {
 
       <SectionTitle>Rules</SectionTitle>
       <ul className="mt-6 max-w-3xl space-y-3 leading-relaxed">
+        <li><strong className="text-gold">Two styles carry most screens.</strong> Large Title (Katibeh 34/41) for the heading, Body (SF Pro 17/22) for the copy under it.</li>
         <li><strong className="text-gold">Never below 11.</strong> Caption 2 is the smallest size iOS allows; Font.sans clamps anything smaller.</li>
         <li><strong className="text-gold">Buttons are Black.</strong> Heavy, short and tracked 1.5, so an uppercase word doesn&apos;t set solid.</li>
         <li><strong className="text-gold">Eyebrows are tracked 2.5.</strong> Uppercase SF at 12 semibold, above a group, never as a screen title.</li>

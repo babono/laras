@@ -123,6 +123,10 @@ export const principles: Principle[] = [
         body: "Katibeh carries the voice in titles and headings; SF Pro carries the interface. Back links and step counters stay in SF because they are interface, not voice.",
       },
       {
+        title: "Glass for controls, never for content",
+        body: "Controls that float over the instrument or the waterfall are Liquid Glass; cards, lists and everything else in the content layer stay solid. That's Apple's rule for the material, and it keeps the glass meaning something: this floats, and you can press it.",
+      },
+      {
         title: "Soft edges, space as structure",
         body: "No hairline under the top bar. On a dark ground with generous space between cards, a rule draws a boundary the layout already made, and puts a hard edge across a screen whose character is soft.",
       },
@@ -131,7 +135,11 @@ export const principles: Principle[] = [
         body: "The splash gangsa plays a real kotekan, not random notes: a struck key glows and decays like bronze, and the free hand damps it as the next one lands. Ambient motion runs on the render server so it never stutters while the app is busy.",
       },
     ],
-    do: ["Keep new chrome inside the gold-on-brown family.", "Give motion a physical reason: a strike, a ring, a damp."],
+    do: [
+      "Keep new chrome inside the gold-on-brown family.",
+      "Give motion a physical reason: a strike, a ring, a damp.",
+      "Use the system's Liquid Glass, not a hand-made imitation.",
+    ],
     dont: ["Add a new accent color for decoration.", "Separate content with lines where space already does it."],
   },
 ];
