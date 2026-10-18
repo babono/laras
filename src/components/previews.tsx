@@ -10,31 +10,38 @@ import { useState } from "react";
 import { MotifBand } from "./motif-band";
 import { ArrowRight, ChevronLeft, Clock, Gear, Help, Minus, Play, Plus, Radio } from "./icons";
 
-type PillStyle = "filled" | "glass" | "secondary";
+type PillStyle = "prominent" | "glass" | "solid" | "wash";
+
+/** The four surfaces, as ButtonSurface draws them in the app. */
+const surfaces: Record<PillStyle, string> = {
+  prominent: "glass glass-gold text-on-fill",
+  glass: "glass text-gold",
+  solid: "bg-fill text-on-fill",
+  wash: "bg-gold/12 text-gold",
+};
 
 export function Pill({
   title,
-  style = "glass",
+  style = "wash",
   compact = false,
+  disabled = false,
   leading,
   trailing,
 }: {
   title: string;
   style?: PillStyle;
   compact?: boolean;
+  disabled?: boolean;
   leading?: React.ReactNode;
   trailing?: React.ReactNode;
 }) {
-  const look = {
-    filled: "bg-fill text-on-fill",
-    glass: "glass text-gold",
-    secondary: "bg-[#1C1612] text-gold",
-  }[style];
+  // Disabled: the gold goes and the type fades; the button itself stays.
+  const look = disabled ? (style === "wash" ? "bg-gold/6 text-gold/40" : "glass text-gold/40") : surfaces[style];
   return (
     // The drawn pill can be 38 tall; the target is never under 44.
-    <button type="button" className="flex min-h-11 items-center">
+    <button type="button" disabled={disabled} className="flex min-h-11 items-center">
       <span
-        className={`flex items-center rounded-kotek whitespace-nowrap uppercase ${look} ${
+        className={`flex items-center rounded-full whitespace-nowrap uppercase ${look} ${
           compact ? "h-[38px] gap-2 px-[18px] text-[14px]" : "h-14 gap-2.5 px-[30px] text-[19px]"
         } font-black tracking-[1.5px]`}
       >
@@ -50,7 +57,7 @@ export function SecondaryButton({ title, icon }: { title: string; icon?: React.R
   return (
     <button
       type="button"
-      className="flex min-h-11 items-center gap-2 rounded-kotek border border-gold/45 bg-gold/8 px-[18px] py-[11px] text-[15px] font-black tracking-[1.5px] text-gold"
+      className="flex min-h-11 items-center gap-2 rounded-full bg-gold/12 px-[18px] py-[11px] text-[15px] font-black tracking-[1.5px] text-gold"
     >
       {icon}
       {title}
@@ -65,20 +72,19 @@ export function SectionLabel({ children }: { children: React.ReactNode }) {
 function TopBar() {
   return (
     <div className="relative flex w-full min-w-[680px] items-center px-6 pt-[18px] pb-3">
-      <button type="button" className="flex min-h-11 items-center gap-1 text-[16px] text-gold">
+      <button type="button" aria-label="Back" className="glass grid size-11 place-items-center rounded-full text-gold">
         <ChevronLeft className="size-[18px]" />
-        Back
       </button>
       <h3 className="pointer-events-none absolute inset-x-24 truncate text-center font-display text-[30px] tracking-[1.5px] text-gold uppercase">
         Choose your gangsa
       </h3>
       <div className="ml-auto flex items-center gap-3.5">
         <span className="text-[13px] font-medium text-gold">3 saved</span>
-        <button type="button" aria-label="How Kotek works" className="grid size-11 place-items-center text-gold">
-          <Help className="size-[22px]" />
+        <button type="button" aria-label="How Kotek works" className="glass grid size-11 place-items-center rounded-full text-gold">
+          <Help className="size-[20px]" />
         </button>
-        <button type="button" aria-label="Settings" className="grid size-11 place-items-center text-gold">
-          <Gear className="size-[22px]" />
+        <button type="button" aria-label="Settings" className="glass grid size-11 place-items-center rounded-full text-gold">
+          <Gear className="size-[20px]" />
         </button>
       </div>
     </div>
@@ -159,7 +165,7 @@ function ConfirmDialog() {
           <Pill title="Cancel" compact />
           <button
             type="button"
-            className="flex h-[38px] items-center rounded-kotek border-[1.5px] border-miss/60 px-[18px] text-[14px] font-black tracking-[1.5px] text-miss uppercase"
+            className="flex h-[38px] items-center rounded-full bg-miss/12 px-[18px] text-[14px] font-black tracking-[1.5px] text-miss uppercase"
           >
             Delete
           </button>
@@ -278,20 +284,38 @@ function Verdict({ kind }: { kind: "great" | "miss" }) {
 /** One preview per component variant, by `${slug}/${variant}`. */
 export function Preview({ id }: { id: string }) {
   switch (id) {
-    case "button/filled":
-      return <Pill title="Start practice" style="filled" leading={<Play className="size-[18px]" />} />;
-    case "button/secondary":
-      return <Pill title="Retry" style="secondary" />;
+    case "button/prominent":
+      return (
+        <OverContent>
+          <Pill title="Start practice" style="prominent" leading={<Play className="size-[18px]" />} />
+        </OverContent>
+      );
     case "button/glass":
       return (
         <OverContent>
-          <Pill title="Next" trailing={<ArrowRight className="size-4" />} />
+          <div className="flex items-center gap-3.5">
+            <button type="button" aria-label="Back" className="glass grid size-11 place-items-center rounded-full text-gold">
+              <ChevronLeft className="size-[18px]" />
+            </button>
+            <button type="button" className="glass flex h-11 items-center gap-2.5 rounded-full px-6 text-[16px] font-semibold text-gold">
+              Create kotek <Plus className="size-4" />
+            </button>
+          </div>
         </OverContent>
       );
-    case "button/compact":
+    case "button/solid":
+      return <Pill title="Set up · 4 steps" style="solid" />;
+    case "button/wash":
+      return (
+        <div className="flex gap-3">
+          <Pill title="Coop" />
+          <Pill title="Cancel" compact />
+        </div>
+      );
+    case "button/disabled":
       return (
         <OverContent>
-          <Pill title="Pause" compact />
+          <Pill title="Next" style="prominent" compact disabled />
         </OverContent>
       );
     case "secondary-button/default":

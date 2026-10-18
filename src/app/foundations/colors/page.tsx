@@ -25,8 +25,8 @@ const pairs = [
   { label: "Description text on the ground", fg: palette.description, bg: palette.ground },
   { label: "Description text on a card", fg: palette.description, bg: palette.card },
   { label: "Label on the filled button", fg: palette.onFill, bg: palette.fill },
-  { label: "Secondary button label", fg: palette.gold, bg: "#1C1612" },
-  { label: "Previous description #7A5E4E on the ground", fg: "#7A5E4E", bg: palette.ground, proposal: true },
+  { label: "Designed description #9D8273 on the ground", fg: "#9D8273", bg: palette.ground, proposal: true },
+  { label: "Designed description #9D8273 on a card", fg: "#9D8273", bg: palette.card, proposal: true },
 ];
 
 export default function Colors() {
@@ -51,9 +51,10 @@ export default function Colors() {
 
       <SectionTitle id="contrast">Contrast</SectionTitle>
       <p className="mt-3 max-w-3xl leading-relaxed">
-        WCAG asks 4.5:1 for body text and 3:1 for large text (24px, or 19px bold) and interface parts. The description
-        color was raised from #7A5E4E (last row) to pass large text everywhere; at 4.4:1 on the ground it is still a
-        hair under 4.5:1, so keep it for supporting text at 15pt and up, not for long body copy.
+        WCAG asks 4.5:1 for body text and 3:1 for large text (24px, or 19px bold) and interface parts. The app&apos;s
+        description color fails on both surfaces, and it sets supporting text across the app (through Theme.stone and
+        Theme.inkStone too), so it is the most important contrast issue open. The design&apos;s #9D8273, in the last
+        rows, passes large text everywhere and is a hair under 4.5:1 on the ground.
       </p>
       <div className="mt-6 overflow-x-auto rounded-kotek border border-gold/10">
         <table className="w-full min-w-[560px] text-left text-sm">
@@ -73,7 +74,7 @@ export default function Colors() {
                 <tr key={p.label} className="border-t border-gold/10">
                   <td className="px-4 py-3">
                     {p.label}
-                    {p.proposal && <span className="ml-2 rounded bg-gold/15 px-1.5 py-0.5 text-xs text-gold">replaced</span>}
+                    {p.proposal && <span className="ml-2 rounded bg-gold/15 px-1.5 py-0.5 text-xs text-gold">designed</span>}
                   </td>
                   <td className="px-4 py-3">
                     <span className="rounded-md px-3 py-1.5" style={{ background: p.bg, color: p.fg }}>

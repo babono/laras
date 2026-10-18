@@ -92,3 +92,8 @@
     -webkit-backdrop-filter: none;
   }
 }
+
+/* Prominent glass: the same stand-in, tinted with the button fill at 60%. */
+.glass-gold {
+  background: color-mix(in srgb, var(--fill) 60%, transparent);
+}

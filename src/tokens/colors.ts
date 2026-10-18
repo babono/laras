@@ -43,17 +43,19 @@ export const colorGroups: { title: string; intro: string; tokens: ColorToken[] }
       "Gold on brown is the whole family. There is no light text: what used to be cream is the title gold, and supporting text is the description brown.",
     tokens: [
       { name: "TitleText", hex: asset("TitleText"), swift: "Theme.gold · Theme.cream", source: "asset", role: "Titles, primary text, outlines and accents." },
-      { name: "DescriptionText", hex: asset("DescriptionText"), swift: "Theme.description · Theme.stone", source: "asset", role: "Descriptions, metadata, captions. Was #7A5E4E, which failed contrast." },
+      { name: "DescriptionText", hex: asset("DescriptionText"), swift: "Theme.description · Theme.stone", source: "asset", role: "Descriptions, metadata, captions. Fails contrast on both surfaces; the design proposes #9D8273." },
+      { name: "Description (designed)", hex: "#9D8273", swift: "DescriptionText, proposed", source: "literal", role: "The design's replacement: 4.4:1 on the ground, up from 2.7:1.", designed: true },
     ],
   },
   {
     title: "Action",
     intro:
-      "The filled button is the one place in the app where dark type sits on a light slab; the two colors are a pair and move together. The secondary slab is darker than the ground, so it reads as a control rather than another card. The glass button has no color of its own: it takes it from what is behind it.",
+      "The filled button is the one place in the app where dark type sits on a light slab; the two colors are a pair and move together. The prominent glass button is the same gold, as a 60% tint on the glass; plain glass has no color of its own. The design proposes a warmer gold and a dark inactive slab, not built yet.",
     tokens: [
       { name: "Tertiary", hex: asset("Tertiary"), swift: "Theme.buttonFill", source: "asset", role: "The filled button's slab." },
       { name: "LaunchBackground", hex: asset("LaunchBackground"), swift: "Theme.onButtonFill", source: "asset", role: "Type on the button fill. Only correct on Tertiary." },
-      { name: "ButtonSecondary", hex: asset("ButtonSecondary"), swift: "Theme.buttonSecondary", source: "asset", role: "The secondary button's slab, with gold type." },
+      { name: "Button fill (designed)", hex: "#FBD494", swift: "Tertiary, proposed", source: "literal", role: "The design's button gold, a touch warmer.", designed: true },
+      { name: "Inactive button (designed)", hex: "#1C1612", swift: "—", source: "literal", role: "The design's dark button slab. No component uses it yet.", designed: true },
       { name: "LoadingBar", hex: asset("LoadingBar"), swift: "Theme.progress", source: "asset", role: "Progress: the splash's loading line." },
     ],
   },
